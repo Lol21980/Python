@@ -1,0 +1,15 @@
+.venv/
+venv/
+data/
+logs/
+*.db
+*.sqlite3
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.env
+.idea/
+*.parquet
+*.feather
+*.pickle
+*.pkl

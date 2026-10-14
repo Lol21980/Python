@@ -1,0 +1,12 @@
+# pryamye zavisimosti proekta (poetry add ...)
+# polnye versii fiksiruyutsya v poetry.lock
+pandas>=2.2
+polars>=1.0
+pyarrow>=17.0
+sqlalchemy>=2.0
+psycopg2-binary>=2.9
+python-dotenv>=1.0
+matplotlib>=3.8
+openpyxl>=3.1
+jupyter>=1.0
+ruff>=0.6
