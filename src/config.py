@@ -1,26 +1,27 @@
 # -*- coding: utf-8 -*-
-"""Konfiguratsiya proekta LR1: puti, skhema, parametry."""
+"""Настройки проекта: пути, схема типов, параметры."""
 from pathlib import Path
 
+# Корень проекта (папка lab1): от файла src/config.py два шага вверх.
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
-# Ishodniki (vneshnyaya papka s CSV, ne izmenyaetsya)
+# Исходники лежат отдельно и никогда не изменяются (только чтение).
 RAW_EXTERNAL_DIR = Path(r"C:\Users\artur\Desktop\датасеты\Земский\csv")
 RAW_MAIN_FILE = RAW_EXTERNAL_DIR / "1_датасет_население_возраст_и_пол.csv"
 RAW_FILE_2 = RAW_EXTERNAL_DIR / "2_датасет_рождаемость_смертность_урбанизация.csv"
 RAW_FILE_3 = RAW_EXTERNAL_DIR / "3_датасет_миграция_фертильность_брачность.csv"
 
-# Vnutrennie katalogi proekta
+# Папки проекта: движение данных только raw -> interim -> processed.
 RAW_DIR = PROJECT_ROOT / "data" / "raw"
 INTERIM_DIR = PROJECT_ROOT / "data" / "interim"
 PROCESSED_DIR = PROJECT_ROOT / "data" / "processed"
 LOGS_DIR = PROJECT_ROOT / "logs"
 DOCS_DIR = PROJECT_ROOT / "docs"
 
-CSV_ENCODING = "utf-8-sig"
-CSV_SEP = ";"
+CSV_ENCODING = "utf-8-sig"  # UTF-8 с BOM (так сохраняет Excel)
+CSV_SEP = ";"  # разделитель русской локали Excel
 
-# Pereimenovanie russkikh kolonok v snake_case
+# Переименование русских колонок в английский snake_case.
 COLUMN_MAP_RU_EN = {
     "Страна": "country",
     "Код страны": "country_code",
@@ -35,14 +36,11 @@ COLUMN_MAP_RU_EN = {
     "Сноска": "footnote",
 }
 
-# Tselevaya (optimizirovannaya) skhema: vybor obosnovan predmetnoy oblastyu,
-# a ne tekushchey vyborkoy.
-#  - year int16: diapazon 1960-2025 << 32767
-#  - value float64: naselenie do ~1.4e9, denezhnye/exponenty do 1e13;
-#    float32 teryaet tselochislenuyu tochnost > 16.7 mln -> berem float64
-#  - povtoryayushchiesya teksty -> category (slovar + int-kody)
-#  - svobodnyy dlinnyy tekst (opredelenie) -> string[pyarrow]
-#  - footnote: 90-96% pustykh -> udalyaetsya pri ochistke
+# Целевая схема типов (выбор по смыслу данных, а не по текущей выборке):
+# year int16 — годы 1960-2024 с запасом влезают в диапазон ±32767;
+# value float64 — население до миллиардов, float32 столько точно не хранит;
+# повторяющиеся тексты -> category (словарь + коды вместо строк);
+# длинное описание -> string; footnote почти пустое -> удаляем.
 SCHEMA_OPTIMIZED = {
     "country": "category",
     "country_code": "category",
@@ -56,16 +54,11 @@ SCHEMA_OPTIMIZED = {
     "value": "float64",
 }
 
-CATEGORY_COLUMNS = [
-    "country", "country_code", "region", "income_group",
-    "indicator_code", "indicator_name", "indicator_topic",
-]
+DROP_COLUMNS = ["footnote"]  # сноска пуста на ~96% — удаляем целиком
 
-DROP_COLUMNS = ["footnote"]
-
-# Skrytye propuski / musor v value (posle strip)
+# Скрытые пропуски в тексте: всё это считаем отсутствием значения.
 HIDDEN_MISSING_TOKENS = {"", "..", "-", "—", "–", "нет данных", "NA", "n/a",
                          "null", "NULL", "None", "#N/A", "?", "*", ".", ","}
 
-SAMPLE_N_ROWS = 200_000
-RANDOM_STATE = 42
+SAMPLE_N_ROWS = 200_000  # размер отладочного среза (шаг 6)
+RANDOM_STATE = 42  # зерно для повторяемости случайных операций
