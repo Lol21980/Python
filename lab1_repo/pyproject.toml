@@ -1,0 +1,29 @@
+[project]
+name = "data-analysis-course"
+version = "0.1.0"
+description = "LR1: obrabotka i ochistka dannykh (WDI, variant 12)"
+requires-python = "==3.12.14"
+dependencies = [
+  "pandas>=2.2",
+  "polars>=1.0",
+  "pyarrow>=17.0",
+  "sqlalchemy>=2.0",
+  "psycopg2-binary>=2.9",
+  "python-dotenv>=1.0",
+  "matplotlib>=3.8",
+  "openpyxl>=3.1",
+  "jupyter>=1.0",
+]
+
+[tool.poetry.group.dev.dependencies]
+ruff = "^0.6"
+
+[tool.poetry]
+package-mode = false
+
+[tool.ruff]
+line-length = 88
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
